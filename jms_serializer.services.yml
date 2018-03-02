@@ -1,0 +1,3 @@
+services:
+  jms_serializer:
+    class: Drupal\jms_serializer\Serializer
