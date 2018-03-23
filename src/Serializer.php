@@ -67,8 +67,18 @@ class Serializer {
    * @return string
    *   The serialized data.
    */
-  public function serializerToXml($object) {
+  public function serializeToXml($object) {
     return $this->serialize($object, 'xml');
+  }
+
+  /**
+   * @param $object
+   *   The object to serialize
+   *
+   * @return array
+   */
+  public function serializeToArray($object) {
+    return json_decode($this->serializeToJson($object), true);
   }
 
   /**
