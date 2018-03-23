@@ -10,6 +10,7 @@
         }
     ],
     "require": {
-        "jms/serializer": "^1.11"
+        "jms/serializer": "^1.11",
+        "indigophp/doctrine-annotation-autoload": "^0.1.0"
     }
 }
