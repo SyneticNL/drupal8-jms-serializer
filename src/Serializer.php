@@ -22,11 +22,6 @@ class Serializer {
     static $serializer = NULL;
 
     if (NULL === $serializer) {
-      AnnotationRegistry::registerAutoloadNamespace(
-        'JMS\Serializer\Annotation',
-        realpath(DRUPAL_ROOT . '/../vendor/jms/serializer/src')
-      );
-
       $serializer = SerializerBuilder::create()->build();
     }
 
