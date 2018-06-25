@@ -4,6 +4,8 @@ namespace Drupal\jms_serializer;
 
 use Doctrine\Common\Annotations\AnnotationRegistry;
 use JMS\Serializer\SerializerBuilder;
+use JMS\Serializer\EventDispatcher\EventDispatcher;
+use JMS\Serializer\EventDispatcher\EventSubscriberInterface;
 
 /**
  * Class Serializer.
@@ -11,6 +13,25 @@ use JMS\Serializer\SerializerBuilder;
  * @package Drupal\jms_serializer
  */
 class Serializer {
+
+  /**
+   * The event collector.
+   *
+   * @var \Drupal\jms_serializer\EventSubscriberCollector
+   */
+  private $collector;
+
+  /**
+   * Serializer constructor.
+   *
+   * @param \Drupal\jms_serializer\EventSubscriberCollector $collector
+   *   The event collector.
+   */
+  public function __construct(
+    EventSubscriberCollector $collector
+  ) {
+    $this->collector = $collector;
+  }
 
   /**
    * Create a JMS Serializer.
@@ -22,7 +43,15 @@ class Serializer {
     static $serializer = NULL;
 
     if (NULL === $serializer) {
-      $serializer = SerializerBuilder::create()->build();
+      $builder = SerializerBuilder::create();
+
+      $builder->configureListeners(function (EventDispatcher $dispatcher) {
+        foreach ($this->collector->getEvents() as $event) {
+          $dispatcher->addSubscriber($event);
+        }
+      });
+
+      $serializer = $builder->build();
     }
 
     return $serializer;
