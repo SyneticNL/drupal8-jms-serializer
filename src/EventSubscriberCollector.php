@@ -1,4 +1,5 @@
 <?php
+
 namespace Drupal\jms_serializer;
 
 use JMS\Serializer\EventDispatcher\EventSubscriberInterface;
@@ -21,7 +22,7 @@ class EventSubscriberCollector {
    * Add a new subscriber.
    *
    * @param \JMS\Serializer\EventDispatcher\EventSubscriberInterface $eventSubscriber
-   *  The new subscriber.
+   *   The new subscriber.
    */
   public function addSubscriber(EventSubscriberInterface $eventSubscriber) {
     $this->events[] = $eventSubscriber;

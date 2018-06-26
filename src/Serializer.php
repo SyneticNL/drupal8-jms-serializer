@@ -3,6 +3,7 @@
 namespace Drupal\jms_serializer;
 
 use Doctrine\Common\Annotations\AnnotationRegistry;
+use JMS\Serializer\Handler\HandlerRegistry;
 use JMS\Serializer\SerializerBuilder;
 use JMS\Serializer\EventDispatcher\EventDispatcher;
 use JMS\Serializer\EventDispatcher\EventSubscriberInterface;
@@ -19,18 +20,27 @@ class Serializer {
    *
    * @var \Drupal\jms_serializer\EventSubscriberCollector
    */
-  private $collector;
+  private $eventSubscriberCollector;
+
+  /**
+   * .
+   * @var \Drupal\jms_serializer\HandlerCollector
+   */
+  private $handlerCollector;
 
   /**
    * Serializer constructor.
    *
-   * @param \Drupal\jms_serializer\EventSubscriberCollector $collector
+   * @param \Drupal\jms_serializer\EventSubscriberCollector $eventSubscriberCollector
    *   The event collector.
+   * @param \Drupal\jms_serializer\HandlerCollector $handlerCollector
    */
   public function __construct(
-    EventSubscriberCollector $collector
+    EventSubscriberCollector $eventSubscriberCollector,
+    HandlerCollector $handlerCollector
   ) {
-    $this->collector = $collector;
+    $this->eventSubscriberCollector = $eventSubscriberCollector;
+    $this->handlerCollector = $handlerCollector;
   }
 
   /**
@@ -46,8 +56,14 @@ class Serializer {
       $builder = SerializerBuilder::create();
 
       $builder->configureListeners(function (EventDispatcher $dispatcher) {
-        foreach ($this->collector->getEvents() as $event) {
+        foreach ($this->eventSubscriberCollector->getEvents() as $event) {
           $dispatcher->addSubscriber($event);
+        }
+      });
+
+      $builder->configureHandlers(function (HandlerRegistry $registry) {
+        foreach ($this->handlerCollector->getHandlers() as $handler) {
+          $registry->registerSubscribingHandler($handler);
         }
       });
 
